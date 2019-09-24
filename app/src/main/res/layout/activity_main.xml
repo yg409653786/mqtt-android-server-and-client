@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_margin="16dp"
+    android:orientation="horizontal"
+    tools:context="in.mqtt.MainActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="startService"
+                android:text="Start Service" />
+
+            <Button
+                android:id="@+id/stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="stopService"
+                android:text="Stop Service" />
+
+            <Button
+                android:id="@+id/serverSendMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="serverSendMessage"
+                android:text="Send Message" />
+
+            <TextView
+                android:id="@+id/showServerToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/startClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="startClient"
+                android:text="Start Client" />
+
+            <Button
+                android:id="@+id/endClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="endClient"
+                android:text="end Client" />
+
+            <Button
+                android:id="@+id/clientSendMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clientSendMessage"
+                android:text="Send Message" />
+
+            <TextView
+                android:id="@+id/showClientToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
