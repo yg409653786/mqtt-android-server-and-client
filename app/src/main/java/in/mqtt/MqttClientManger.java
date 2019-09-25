@@ -57,6 +57,12 @@ public class MqttClientManger {
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
+
+                    try {
+                        mqttAndroidClient.subscribe(getEmitTopic(), 2, iMqttMessageListener);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

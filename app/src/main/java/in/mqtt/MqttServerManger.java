@@ -4,11 +4,15 @@ import android.os.Environment;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
 
 import io.moquette.BrokerConstants;
 import io.moquette.interception.InterceptHandler;
+import io.moquette.proto.messages.AbstractMessage;
+import io.moquette.proto.messages.PublishMessage;
 import io.moquette.server.Server;
 import io.moquette.server.config.MemoryConfig;
 
@@ -53,18 +57,18 @@ public class MqttServerManger {
         }
     }
 
-//    public void sendMessage(String message) {
-//        if (server == null) {
-//            return;
-//        }
-//        try {
-//            PublishMessage mqttMessage = new PublishMessage();
-//            mqttMessage.setQos(AbstractMessage.QOSType.EXACTLY_ONCE);
-//            mqttMessage.setTopicName(getServer2ApTopic());
-//            mqttMessage.setPayload(ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8"))));
-//            server.internalPublish(mqttMessage);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void sendMessage(String message) {
+        if (server == null) {
+            return;
+        }
+        try {
+            PublishMessage mqttMessage = new PublishMessage();
+            mqttMessage.setQos(AbstractMessage.QOSType.EXACTLY_ONCE);
+            mqttMessage.setTopicName(MqttClientManger.getInstance().getEmitTopic());
+            mqttMessage.setPayload(ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8"))));
+            server.internalPublish(mqttMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

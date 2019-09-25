@@ -32,6 +32,13 @@
                 android:onClick="stopService"
                 android:text="Stop Service" />
 
+            <Button
+                android:id="@+id/serverSendMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="serverSendMessage"
+                android:text="Send Message" />
+
             <TextView
                 android:id="@+id/showServerToast"
                 android:layout_width="match_parent"
