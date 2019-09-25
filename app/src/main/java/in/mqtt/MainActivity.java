@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.Utils;
 
 import org.apache.log4j.BasicConfigurator;
@@ -107,9 +108,25 @@ public class MainActivity extends AppCompatActivity {
         }, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
+                processReportMessage(topic, message);
                 showClientToast("收到订阅消息 :主题" + topic + new String(message.getPayload()));
             }
         });
+    }
+
+    public void processReportMessage(String topic, MqttMessage message) {
+        if (!MqttClientManger.getInstance().getReportTopic().equalsIgnoreCase(topic)) {
+            return;
+        }
+        MqttMessageModel mqttMessageModel = GsonUtils.fromJson(new String(message.getPayload()), MqttMessageModel.class);
+        switch (mqttMessageModel.getCmd()) {
+            case "3801":
+                MqttMessageModel emitModel = new MqttMessageModel();
+                emitModel.setCmd("4801");
+                emitModel.setSer_id(mqttMessageModel.getSer_id());
+                MqttClientManger.getInstance().sendMessage(emitModel.toString());
+                break;
+        }
     }
 
     public void endClient(View v) {
