@@ -40,6 +40,10 @@ dependencies {
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 //    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
+    implementation 'com.yanzhenjie.andserver:annotation:2.0.5'
+    implementation 'com.yanzhenjie.andserver:api:2.0.5'
+    annotationProcessor 'com.yanzhenjie.andserver:processor:2.0.5'
+
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.blankj:utilcodex:1.25.8'
 
