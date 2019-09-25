@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         }, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                showClientToast("收到订阅消息 :" + new String(message.getPayload()));
+                showClientToast("收到订阅消息 :主题" + topic + new String(message.getPayload()));
             }
         });
     }

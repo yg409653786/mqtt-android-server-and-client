@@ -42,7 +42,8 @@ public class MqttServerManger {
         MemoryConfig memoryConfig = new MemoryConfig(new Properties());
         memoryConfig.setProperty(BrokerConstants.PERSISTENT_STORE_PROPERTY_NAME, Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + BrokerConstants.DEFAULT_MOQUETTE_STORE_MAP_DB_FILENAME);
         memoryConfig.setProperty(BrokerConstants.HOST_PROPERTY_NAME, Config.MQTT_IP);
-        memoryConfig.setProperty(BrokerConstants.PORT_PROPERTY_NAME, "1883");
+        memoryConfig.setProperty(BrokerConstants.PORT_PROPERTY_NAME, Config.MQTT_PORT);
+        memoryConfig.setProperty(BrokerConstants.WEB_SOCKET_PORT_PROPERTY_NAME, Config.WEB_SOCKET_PORT);
         return memoryConfig;
     }
 

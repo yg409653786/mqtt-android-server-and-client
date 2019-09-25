@@ -33,7 +33,7 @@ public class MqttClientManger {
     private MqttAndroidClient mqttAndroidClient;
 
     public void init(Context context, MqttCallbackExtended mqttCallbackExtended, IMqttMessageListener iMqttMessageListener) {
-        mqttAndroidClient = new MqttAndroidClient(context, "tcp:/" + Config.MQTT_IP + ":1883", "Android-Client-" + System.currentTimeMillis());
+        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, "Android-Client-" + System.currentTimeMillis());
         mqttAndroidClient.setCallback(mqttCallbackExtended);
 
         try {
