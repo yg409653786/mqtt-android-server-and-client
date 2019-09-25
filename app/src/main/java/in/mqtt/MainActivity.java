@@ -118,10 +118,6 @@ public class MainActivity extends AppCompatActivity {
         MqttClientManger.getInstance().sendMessage("Hello Word 服务端");
     }
 
-    public void serverSendMessage(View v) {
-        MqttServerManger.getInstance().sendMessage("Hello Word 客服端");
-    }
-
     public void showServerToast(CharSequence charSequence) {
         runOnUiThread(new Runnable() {
             @Override

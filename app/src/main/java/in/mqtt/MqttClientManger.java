@@ -30,7 +30,7 @@ public class MqttClientManger {
 
     public static final String TOPIC = "TEST";
     private MqttAndroidClient mqttAndroidClient;
-    private String serverUri = "tcp://192.168.16.184:1883";
+    private String serverUri = "tcp://192.168.16.100:1883";
 
     public void init(Context context, MqttCallbackExtended mqttCallbackExtended, IMqttMessageListener iMqttMessageListener) {
         mqttAndroidClient = new MqttAndroidClient(context, serverUri, "Android-Client-" + System.currentTimeMillis());
