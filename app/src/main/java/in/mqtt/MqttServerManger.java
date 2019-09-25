@@ -52,4 +52,19 @@ public class MqttServerManger {
             server.stopServer();
         }
     }
+
+//    public void sendMessage(String message) {
+//        if (server == null) {
+//            return;
+//        }
+//        try {
+//            PublishMessage mqttMessage = new PublishMessage();
+//            mqttMessage.setQos(AbstractMessage.QOSType.EXACTLY_ONCE);
+//            mqttMessage.setTopicName(getServer2ApTopic());
+//            mqttMessage.setPayload(ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8"))));
+//            server.internalPublish(mqttMessage);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

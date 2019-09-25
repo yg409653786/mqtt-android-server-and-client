@@ -33,14 +33,15 @@ public class MqttClientManger {
     private MqttAndroidClient mqttAndroidClient;
 
     public void init(Context context, MqttCallbackExtended mqttCallbackExtended, IMqttMessageListener iMqttMessageListener) {
-        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, "Android-Client-" + System.currentTimeMillis());
+        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, getDeviceMac());
         mqttAndroidClient.setCallback(mqttCallbackExtended);
 
         try {
             MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
             mqttConnectOptions.setAutomaticReconnect(true);
             mqttConnectOptions.setCleanSession(true);
-
+            mqttConnectOptions.setUserName(getDeviceMac());
+            mqttConnectOptions.setPassword(getDeviceMac().toCharArray());
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
@@ -52,7 +53,7 @@ public class MqttClientManger {
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
 
                     try {
-                        mqttAndroidClient.subscribe(getAp2ServerTopic(), 2, iMqttMessageListener);
+                        mqttAndroidClient.subscribe(getReportTopic(), 2, iMqttMessageListener);
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
@@ -88,7 +89,7 @@ public class MqttClientManger {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setQos(2);
             mqttMessage.setPayload(message.getBytes());
-            mqttAndroidClient.publish(getServer2ApTopic(), mqttMessage);
+            mqttAndroidClient.publish(getEmitTopic(), mqttMessage);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -96,17 +97,19 @@ public class MqttClientManger {
 
     //上报消息表示 AP 端主动发送消息到服务器使用的 topic
     //上报消息 /BeesmartReport/md5(<beesmart_key>)/md5(<device_mac>)
-    private String getAp2ServerTopic() {
+    public String getReportTopic() {
         String beesmart_key = EncryptUtils.encryptMD5ToString("bee-CPRICE").toUpperCase();
-        String device_mac = EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
-        return "/BeesmartReport/" + beesmart_key + "/" + device_mac;
+        return "/BeesmartReport/" + beesmart_key + "/" + getDeviceMac();
     }
 
     //下发消息表示服务器 主动发送消息到 AP 使用的 topic
     //下发消息 /BeesmartEmit/md5(<beesmart_key>)/md5(<device_mac>)
-    private String getServer2ApTopic() {
+    public String getEmitTopic() {
         String beesmart_key = EncryptUtils.encryptMD5ToString("bee-CPRICE").toUpperCase();
-        String device_mac = EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
-        return "/BeesmartEmit/" + beesmart_key + "/" + device_mac;
+        return "/BeesmartEmit/" + beesmart_key + "/" + MqttClientManger.getInstance().getDeviceMac();
+    }
+
+    public String getDeviceMac() {
+        return EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
     }
 }
