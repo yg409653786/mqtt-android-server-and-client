@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         MqttExtendModel mqttExtendModel = new MqttExtendModel();
         mqttExtendModel.setInput(new InputModel("ap_mac", "pricetag_mac"));
-        messageModel.setExtend(mqttExtendModel.toString());
+        messageModel.setExtend(mqttExtendModel);
 
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
     }
