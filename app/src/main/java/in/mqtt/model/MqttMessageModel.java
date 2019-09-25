@@ -1,4 +1,4 @@
-package in.mqtt;
+package in.mqtt.model;
 
 import androidx.annotation.NonNull;
 
@@ -12,6 +12,7 @@ public class MqttMessageModel implements Serializable {
     private String msg;//存放指令的字符串数据
     private String cmd;//存放指令值
     private String ser_id;//存放消息的唯一 id，用于唯一标记一个消息，单次会话回传该字段
+
 
     public String getExtend() {
         return extend;

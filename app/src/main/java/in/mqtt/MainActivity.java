@@ -17,6 +17,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Collections;
 
+import in.mqtt.model.InputModel;
+import in.mqtt.model.MqttExtendModel;
+import in.mqtt.model.MqttMessageModel;
 import in.mqtt.mqttserver.R;
 import io.moquette.interception.AbstractInterceptHandler;
 import io.moquette.interception.messages.InterceptConnectMessage;
@@ -136,6 +139,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void clientSendMessage(View v) {
         MqttClientManger.getInstance().sendMessage("Hello Word 服务端");
+        MqttMessageModel messageModel = new MqttMessageModel();
+        messageModel.setCmd("3815");
+        messageModel.setSer_id(System.currentTimeMillis() + "");
+
+        MqttExtendModel mqttExtendModel = new MqttExtendModel();
+        mqttExtendModel.setInput(new InputModel("ap_mac", "pricetag_mac"));
+        messageModel.setExtend(mqttExtendModel.toString());
+
+        MqttClientManger.getInstance().sendMessage(messageModel.toString());
     }
 
     public void serverSendMessage(View v) {
