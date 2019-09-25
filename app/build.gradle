@@ -31,14 +31,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0-alpha10'
 
     implementation 'io.moquette:moquette-netty-parser:0.8.1'
     implementation 'io.moquette:moquette-broker:0.8.1'
     implementation 'io.moquette:moquette-parser-commons:0.8.1'
-
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
-
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 //    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.blankj:utilcodex:1.25.8'
+
+
 }

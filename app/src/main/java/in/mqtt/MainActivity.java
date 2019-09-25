@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.Utils;
+
 import org.apache.log4j.BasicConfigurator;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Utils.init(getApplicationContext());
         showServerToast = findViewById(R.id.showServerToast);
         showClientToast = findViewById(R.id.showClientToast);
 
@@ -116,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void clientSendMessage(View v) {
         MqttClientManger.getInstance().sendMessage("Hello Word 服务端");
+
+
     }
 
     public void showServerToast(CharSequence charSequence) {

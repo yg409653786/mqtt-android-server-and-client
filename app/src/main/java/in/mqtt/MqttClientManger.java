@@ -2,6 +2,8 @@ package in.mqtt;
 
 import android.content.Context;
 
+import com.blankj.utilcode.util.EncryptUtils;
+
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -28,12 +30,10 @@ public class MqttClientManger {
         return inst;
     }
 
-    public static final String TOPIC = "TEST";
     private MqttAndroidClient mqttAndroidClient;
-    private String serverUri = "tcp://192.168.16.100:1883";
 
     public void init(Context context, MqttCallbackExtended mqttCallbackExtended, IMqttMessageListener iMqttMessageListener) {
-        mqttAndroidClient = new MqttAndroidClient(context, serverUri, "Android-Client-" + System.currentTimeMillis());
+        mqttAndroidClient = new MqttAndroidClient(context, "tcp:/" + Config.MQTT_IP + ":1883", "Android-Client-" + System.currentTimeMillis());
         mqttAndroidClient.setCallback(mqttCallbackExtended);
 
         try {
@@ -52,7 +52,7 @@ public class MqttClientManger {
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
 
                     try {
-                        mqttAndroidClient.subscribe(TOPIC, 2, iMqttMessageListener);
+                        mqttAndroidClient.subscribe(getAp2ServerTopic(), 2, iMqttMessageListener);
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
@@ -88,10 +88,25 @@ public class MqttClientManger {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setQos(2);
             mqttMessage.setPayload(message.getBytes());
-            mqttAndroidClient.publish(TOPIC, mqttMessage);
+            mqttAndroidClient.publish(getServer2ApTopic(), mqttMessage);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
+    //上报消息表示 AP 端主动发送消息到服务器使用的 topic
+    //上报消息 /BeesmartReport/md5(<beesmart_key>)/md5(<device_mac>)
+    private String getAp2ServerTopic() {
+        String beesmart_key = EncryptUtils.encryptMD5ToString("bee-CPRICE").toUpperCase();
+        String device_mac = EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
+        return "/BeesmartReport/" + beesmart_key + "/" + device_mac;
+    }
+
+    //下发消息表示服务器 主动发送消息到 AP 使用的 topic
+    //下发消息 /BeesmartEmit/md5(<beesmart_key>)/md5(<device_mac>)
+    private String getServer2ApTopic() {
+        String beesmart_key = EncryptUtils.encryptMD5ToString("bee-CPRICE").toUpperCase();
+        String device_mac = EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
+        return "/BeesmartEmit/" + beesmart_key + "/" + device_mac;
+    }
 }
