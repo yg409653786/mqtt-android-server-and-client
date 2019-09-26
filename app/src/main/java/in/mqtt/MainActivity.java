@@ -1,6 +1,7 @@
 package in.mqtt;
 
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,8 +29,6 @@ import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.interception.messages.InterceptSubscribeMessage;
 import io.moquette.interception.messages.InterceptUnsubscribeMessage;
 
-import static io.netty.util.CharsetUtil.UTF_8;
-
 public class MainActivity extends AppCompatActivity {
 
     private TextView showServerToast;
@@ -42,19 +41,52 @@ public class MainActivity extends AppCompatActivity {
         Utils.init(getApplicationContext());
         showServerToast = findViewById(R.id.showServerToast);
         showClientToast = findViewById(R.id.showClientToast);
-
         BasicConfigurator.configure();
+        MqttServerManger.getInstance().init(Collections.singletonList(new MainActivity.PublisherListener()));
+
+        MqttClientManger.getInstance().init(this, new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                showClientToast("连接成功  :" + serverURI);
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                showClientToast("连接丢失");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                final String decodedPayload = new String(Base64.decode(message.getPayload(), Base64.DEFAULT));
+                showClientToast("接收到消息 :" + decodedPayload);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                showClientToast("消息发送成功");
+            }
+        }, new IMqttMessageListener() {
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                String decodedPayload = new String(Base64.decode(message.getPayload(), Base64.DEFAULT));
+                processReportMessage(decodedPayload);
+                showClientToast("收到订阅消息 :主题" + topic + decodedPayload);
+            }
+        });
     }
 
-    public void startService(View v) {
-        MqttServerManger.getInstance().init(Collections.singletonList(new MainActivity.PublisherListener()));
+    @Override
+    protected void onDestroy() {
+        MqttClientManger.getInstance().onDestroy();
+        MqttServerManger.getInstance().onDestroy();
+        super.onDestroy();
     }
 
     private class PublisherListener extends AbstractInterceptHandler {
 
         @Override
         public void onPublish(InterceptPublishMessage msg) {
-            final String decodedPayload = new String(msg.getPayload().array(), UTF_8);
+            final String decodedPayload = new String(Base64.decode(msg.getPayload().array(), Base64.DEFAULT));
             showServerToast("接收到的消息 : 主题" + msg.getTopicName() + " 内容: " + decodedPayload);
         }
 
@@ -83,45 +115,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void stopService(View v) {
-        MqttServerManger.getInstance().onDestroy();
-    }
-
-    public void startClient(View v) {
-        MqttClientManger.getInstance().init(this, new MqttCallbackExtended() {
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                showClientToast("连接成功  :" + serverURI);
-            }
-
-            @Override
-            public void connectionLost(Throwable cause) {
-                showClientToast("连接丢失");
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                showClientToast("接收到消息 :" + new String(message.getPayload()));
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                showClientToast("消息发送成功");
-            }
-        }, new IMqttMessageListener() {
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                processReportMessage(topic, message);
-                showClientToast("收到订阅消息 :主题" + topic + new String(message.getPayload()));
-            }
-        });
-    }
-
-    public void processReportMessage(String topic, MqttMessage message) {
-        if (!MqttClientManger.getInstance().getReportTopic().equalsIgnoreCase(topic)) {
-            return;
-        }
-        MqttMessageModel mqttMessageModel = GsonUtils.fromJson(new String(message.getPayload()), MqttMessageModel.class);
+    public void processReportMessage(String message) {
+        MqttMessageModel mqttMessageModel = GsonUtils.fromJson(message, MqttMessageModel.class);
         switch (mqttMessageModel.getCmd()) {
             case "3801":
                 MqttMessageModel emitModel = new MqttMessageModel();
@@ -132,22 +127,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void endClient(View v) {
-        MqttClientManger.getInstance().onDestroy();
-    }
-
 
     public void clientSendMessage(View v) {
-        MqttClientManger.getInstance().sendMessage("Hello Word 服务端");
         MqttMessageModel messageModel = new MqttMessageModel();
         messageModel.setCmd("3815");
         messageModel.setSer_id(System.currentTimeMillis() + "");
 
         MqttExtendModel mqttExtendModel = new MqttExtendModel();
-        mqttExtendModel.setInput(new InputModel("ap_mac", "pricetag_mac"));
+        mqttExtendModel.setInput(new InputModel(Config.AP_MAC, "60 00 00 00 00 0b"));
         messageModel.setExtend(mqttExtendModel);
-
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
+
+//        Bitmap bitmap = ImageUtils.getBitmap(PathManager.getInstance().getWebDir() + "/a.jpg");
+//        Bitmap bitmap1 = BitmapUtils.convertToBlackWhite(bitmap);
+//        Bitmap bitmap2 = BitmapUtils.convertGreyImgByFloyd(bitmap);
+//        ImageUtils.save(bitmap2, PathManager.getInstance().getWebDir() + "/c.jpg", Bitmap.CompressFormat.JPEG);
     }
 
     public void serverSendMessage(View v) {

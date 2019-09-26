@@ -19,20 +19,6 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="startService"
-                android:text="Start Service" />
-
-            <Button
-                android:id="@+id/stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="stopService"
-                android:text="Stop Service" />
-
-            <Button
                 android:id="@+id/serverSendMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,20 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <Button
-                android:id="@+id/startClient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="startClient"
-                android:text="Start Client" />
-
-            <Button
-                android:id="@+id/endClient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="endClient"
-                android:text="end Client" />
 
             <Button
                 android:id="@+id/clientSendMessage"

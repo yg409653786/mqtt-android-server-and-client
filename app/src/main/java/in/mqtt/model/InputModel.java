@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.GsonUtils;
 
 import java.io.Serializable;
 
+import in.mqtt.Config;
 import in.mqtt.fileservice.PathManager;
 
 public class InputModel implements Serializable {
@@ -27,7 +28,7 @@ public class InputModel implements Serializable {
         this.pricetag_mac = pricetag_mac;
         this.cmd = "PictureUpdate";
         this.work_mode = 1;
-        this.picture_path = PathManager.getInstance().getWebDir();
+        this.picture_path = Config.MQTT_IP + ":" + Config.MQTT_FILE_PORT + "/";
         this.coord = "ff";
         this.start = System.currentTimeMillis();
         this.end = System.currentTimeMillis();

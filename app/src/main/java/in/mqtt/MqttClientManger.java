@@ -1,6 +1,7 @@
 package in.mqtt;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.blankj.utilcode.util.EncryptUtils;
 
@@ -12,6 +13,8 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.nio.charset.Charset;
 
 import in.mqtt.mqttclient.MqttAndroidClient;
 
@@ -33,15 +36,13 @@ public class MqttClientManger {
     private MqttAndroidClient mqttAndroidClient;
 
     public void init(Context context, MqttCallbackExtended mqttCallbackExtended, IMqttMessageListener iMqttMessageListener) {
-        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, getDeviceMac());
+        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, Config.AP_MAC);
         mqttAndroidClient.setCallback(mqttCallbackExtended);
 
         try {
             MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
             mqttConnectOptions.setAutomaticReconnect(true);
-            mqttConnectOptions.setCleanSession(true);
-            mqttConnectOptions.setUserName(getDeviceMac());
-            mqttConnectOptions.setPassword(getDeviceMac().toCharArray());
+            mqttConnectOptions.setCleanSession(false);
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
@@ -49,17 +50,11 @@ public class MqttClientManger {
                     disconnectedBufferOptions.setBufferEnabled(true);
                     disconnectedBufferOptions.setBufferSize(1024);
                     disconnectedBufferOptions.setPersistBuffer(false);
-                    disconnectedBufferOptions.setDeleteOldestMessages(true);
+                    disconnectedBufferOptions.setDeleteOldestMessages(false);
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
 
                     try {
                         mqttAndroidClient.subscribe(getReportTopic(), 2, iMqttMessageListener);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        mqttAndroidClient.subscribe(getEmitTopic(), 2, iMqttMessageListener);
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
@@ -94,7 +89,7 @@ public class MqttClientManger {
         try {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setQos(2);
-            mqttMessage.setPayload(message.getBytes());
+            mqttMessage.setPayload(Base64.encode(message.getBytes(Charset.forName("UTF-8")), Base64.DEFAULT));
             mqttAndroidClient.publish(getEmitTopic(), mqttMessage);
         } catch (MqttException e) {
             e.printStackTrace();
@@ -103,19 +98,17 @@ public class MqttClientManger {
 
     //上报消息表示 AP 端主动发送消息到服务器使用的 topic
     //上报消息 /BeesmartReport/md5(<beesmart_key>)/md5(<device_mac>)
-    public String getReportTopic() {
+    private String getReportTopic() {
         String beesmart_key = EncryptUtils.encryptMD5ToString("bee-CPRICE").toUpperCase();
-        return "/BeesmartReport/" + beesmart_key + "/" + getDeviceMac();
+        String device_mac = EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
+        return "/BeesmartReport/" + beesmart_key + "/" + device_mac;
     }
 
     //下发消息表示服务器 主动发送消息到 AP 使用的 topic
     //下发消息 /BeesmartEmit/md5(<beesmart_key>)/md5(<device_mac>)
-    public String getEmitTopic() {
+    private String getEmitTopic() {
         String beesmart_key = EncryptUtils.encryptMD5ToString("bee-CPRICE").toUpperCase();
-        return "/BeesmartEmit/" + beesmart_key + "/" + MqttClientManger.getInstance().getDeviceMac();
-    }
-
-    public String getDeviceMac() {
-        return EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
+        String device_mac = EncryptUtils.encryptMD5ToString(Config.AP_MAC).toUpperCase();
+        return "/BeesmartEmit/" + beesmart_key + "/" + device_mac;
     }
 }
