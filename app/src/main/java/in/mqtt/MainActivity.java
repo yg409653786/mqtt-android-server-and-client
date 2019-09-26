@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.Utils;
 
@@ -41,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         Utils.init(getApplicationContext());
         showServerToast = findViewById(R.id.showServerToast);
         showClientToast = findViewById(R.id.showClientToast);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         BasicConfigurator.configure();
         MqttServerManger.getInstance().init(Collections.singletonList(new MainActivity.PublisherListener()));
 
@@ -57,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                final String decodedPayload = new String(Base64.decode(message.getPayload(), Base64.DEFAULT));
+                final String decodedPayload = new String(EncodeUtils.base64Decode(message.getPayload()));
                 showClientToast("接收到消息 :" + decodedPayload);
             }
 
@@ -68,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                String decodedPayload = new String(Base64.decode(message.getPayload(), Base64.DEFAULT));
+                String decodedPayload = new String(EncodeUtils.base64Decode(message.getPayload()));
                 processReportMessage(decodedPayload);
                 showClientToast("收到订阅消息 :主题" + topic + decodedPayload);
             }
@@ -76,18 +82,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
         MqttClientManger.getInstance().onDestroy();
         MqttServerManger.getInstance().onDestroy();
-        super.onDestroy();
+        super.onPause();
     }
 
     private class PublisherListener extends AbstractInterceptHandler {
 
         @Override
-        public void onPublish(InterceptPublishMessage msg) {
-            final String decodedPayload = new String(Base64.decode(msg.getPayload().array(), Base64.DEFAULT));
-            showServerToast("接收到的消息 : 主题" + msg.getTopicName() + " 内容: " + decodedPayload);
+        public void onPublish(InterceptPublishMessage message) {
+            final String decodedPayload = new String(EncodeUtils.base64Decode(message.getPayload().array()));
+            showServerToast("接收到的消息 : 主题" + message.getTopicName() + " 内容: " + decodedPayload);
         }
 
         @Override
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     public void clientSendMessage(View v) {
         MqttMessageModel messageModel = new MqttMessageModel();
         messageModel.setCmd("3815");
-        messageModel.setSer_id(System.currentTimeMillis() + "");
+        messageModel.setSer_id("0011524284317");
 
         MqttExtendModel mqttExtendModel = new MqttExtendModel();
         mqttExtendModel.setInput(new InputModel(Config.AP_MAC, "60 00 00 00 00 0b"));

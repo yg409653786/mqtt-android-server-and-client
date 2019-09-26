@@ -3,6 +3,7 @@ package in.mqtt;
 import android.content.Context;
 import android.util.Base64;
 
+import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.EncryptUtils;
 
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
@@ -36,7 +37,7 @@ public class MqttClientManger {
     private MqttAndroidClient mqttAndroidClient;
 
     public void init(Context context, MqttCallbackExtended mqttCallbackExtended, IMqttMessageListener iMqttMessageListener) {
-        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, Config.AP_MAC);
+        mqttAndroidClient = new MqttAndroidClient(context, "tcp://" + Config.MQTT_IP + ":" + Config.MQTT_PORT, Config.AP_MAC.toUpperCase());
         mqttAndroidClient.setCallback(mqttCallbackExtended);
 
         try {
@@ -89,7 +90,7 @@ public class MqttClientManger {
         try {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setQos(2);
-            mqttMessage.setPayload(Base64.encode(message.getBytes(Charset.forName("UTF-8")), Base64.DEFAULT));
+            mqttMessage.setPayload(EncodeUtils.base64Encode(message));
             mqttAndroidClient.publish(getEmitTopic(), mqttMessage);
         } catch (MqttException e) {
             e.printStackTrace();

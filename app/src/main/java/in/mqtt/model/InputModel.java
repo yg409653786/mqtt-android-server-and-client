@@ -28,11 +28,11 @@ public class InputModel implements Serializable {
         this.pricetag_mac = pricetag_mac;
         this.cmd = "PictureUpdate";
         this.work_mode = 1;
-        this.picture_path = Config.MQTT_IP + ":" + Config.MQTT_FILE_PORT + "/";
+        this.picture_path = "http://" + Config.MQTT_IP + ":" + Config.MQTT_FILE_PORT + "/";
         this.coord = "ff";
-        this.start = System.currentTimeMillis();
-        this.end = System.currentTimeMillis();
-        this.now = System.currentTimeMillis();
+        this.start = 0;
+        this.end = 0;
+        this.now = 0;
         this.light = true;
         this.freq = 3;
 
