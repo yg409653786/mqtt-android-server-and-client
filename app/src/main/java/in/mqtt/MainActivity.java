@@ -1,6 +1,7 @@
 package in.mqtt;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -123,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
     public void processReportMessage(String message) {
         MqttMessageModel mqttMessageModel = GsonUtils.fromJson(message, MqttMessageModel.class);
         switch (mqttMessageModel.getCmd()) {
-            case "3801":
+            case 3801:
                 MqttMessageModel emitModel = new MqttMessageModel();
-                emitModel.setCmd("4801");
+                emitModel.setCmd(4801);
                 emitModel.setSer_id(mqttMessageModel.getSer_id());
                 MqttClientManger.getInstance().sendMessage(emitModel.toString());
                 break;
@@ -135,12 +136,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void clientSendMessage(View v) {
         MqttMessageModel messageModel = new MqttMessageModel();
-        messageModel.setCmd("3815");
-        messageModel.setSer_id("0011524284317");
+        messageModel.setCmd(3815);
+        messageModel.setSer_id(System.currentTimeMillis() + "");
 
         MqttExtendModel mqttExtendModel = new MqttExtendModel();
-        mqttExtendModel.setInput(new InputModel(Config.AP_MAC, "60 00 00 00 00 0b"));
+
+        //26==>86  29==>89
+        mqttExtendModel.setInput(new InputModel(Config.AP_MAC, "60 00 00 00 00 0b 86 00 00 00"));
         messageModel.setExtend(mqttExtendModel);
+        Log.w("info", messageModel.toString());
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
 
 //        Bitmap bitmap = ImageUtils.getBitmap(PathManager.getInstance().getWebDir() + "/a.jpg");

@@ -7,12 +7,12 @@ import com.blankj.utilcode.util.GsonUtils;
 import java.io.Serializable;
 
 public class MqttExtendModel implements Serializable {
-    private String cmd;
+    private int cmd;
     private String cmd_id;
 
     public MqttExtendModel() {
-        this.cmd = "2000";
-        this.cmd_id = "3345";
+        this.cmd = 2000;
+        this.cmd_id = System.currentTimeMillis() + "";
     }
 
     private InputModel input;
@@ -25,11 +25,11 @@ public class MqttExtendModel implements Serializable {
         this.input = input;
     }
 
-    public String getCmd() {
+    public int getCmd() {
         return cmd;
     }
 
-    public void setCmd(String cmd) {
+    public void setCmd(int cmd) {
         this.cmd = cmd;
     }
 

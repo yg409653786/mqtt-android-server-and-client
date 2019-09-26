@@ -20,21 +20,20 @@ public class InputModel implements Serializable {
     private long end;
     private long now;
     private boolean light;
-    private int freq = 3;
+    private int freq;
 
     public InputModel(String ap_mac, String pricetag_mac) {
         this.ap_mac = ap_mac;
         this.pricetag_mac = pricetag_mac;
         this.cmd = "PictureUpdate";
-        this.work_mode = 1;
+        this.work_mode = 0;
         this.picture_path = "http://" + Config.MQTT_IP + ":" + Config.MQTT_FILE_PORT + "/";
         this.coord = "ff";
         this.start = 0;
         this.end = 0;
         this.now = 0;
-        this.light = true;
-        this.freq = 30;
-
+        this.light = false;
+        this.freq = 0;
     }
 
     public String getCmd() {
