@@ -33,7 +33,7 @@ public class InputModel implements Serializable {
         this.end = 0;
         this.now = 0;
         this.light = true;
-        this.freq = 3;
+        this.freq = 30;
 
     }
 
