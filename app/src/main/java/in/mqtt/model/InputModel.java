@@ -7,7 +7,6 @@ import com.blankj.utilcode.util.GsonUtils;
 import java.io.Serializable;
 
 import in.mqtt.Config;
-import in.mqtt.fileservice.PathManager;
 
 public class InputModel implements Serializable {
 
