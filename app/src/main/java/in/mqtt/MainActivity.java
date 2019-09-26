@@ -142,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
         MqttExtendModel mqttExtendModel = new MqttExtendModel();
 
         //26==>86  29==>89
-        mqttExtendModel.setInput(new InputModel(Config.AP_MAC, "60 00 00 00 00 0b 86 00 00 00"));
+        mqttExtendModel.setInput(new InputModel(Config.AP_MAC, "60 00 00 00 00 0b 86 00 00 00 " +
+                "60 00 00 00 00 09 86 00 00 00"));
         messageModel.setExtend(mqttExtendModel);
         Log.w("info", messageModel.toString());
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
