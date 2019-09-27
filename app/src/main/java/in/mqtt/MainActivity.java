@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.GsonUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.Utils;
 
 import org.apache.log4j.BasicConfigurator;
@@ -150,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         messageModel.setExtend(mqttExtendModel);
         Log.w("info", messageModel.toString());
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
+
+        NetworkUtils.isAvailable();
     }
 
     public void serverSendMessage(View v) {
