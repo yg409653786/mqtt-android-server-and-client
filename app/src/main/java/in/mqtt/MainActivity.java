@@ -1,6 +1,5 @@
 package in.mqtt;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.EncodeUtils;
-import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.Utils;
 
@@ -21,7 +19,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Collections;
 
-import in.mqtt.fileservice.PathManager;
 import in.mqtt.model.InputModel;
 import in.mqtt.model.MqttExtendModel;
 import in.mqtt.model.MqttMessageModel;
@@ -138,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clientSendMessage(View v) {
-        sss("AAAAAAAAAAA", "000009", true);
-        sss("BBBBBBBBBBB", "00000b", false);
+        BitmapUtils.generateBin("品名：电线\n规格：500g\n编码：1288888888888\n库存：12345", "000009", true, 296, 152);
+        BitmapUtils.generateBin("品名：电线\n规格：500g\n编码：1288888888888\n库存：12345", "00000b", false, 296, 152);
 
         MqttMessageModel messageModel = new MqttMessageModel();
         messageModel.setCmd(3815);
@@ -153,20 +150,6 @@ public class MainActivity extends AppCompatActivity {
         messageModel.setExtend(mqttExtendModel);
         Log.w("info", messageModel.toString());
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
-    }
-
-    private void sss(String content, String fileName, boolean select) {
-        Bitmap aa = BitmapUtils.generateBitmap(content, select);
-
-        byte[] bytes = BitmapUtils.changeSingleBytes(aa);
-        Log.w("info", "bytes : " + bytes.length);
-        byte[] com = new byte[bytes.length * 2];
-
-        System.arraycopy(bytes, 0, com, 0, bytes.length);
-        System.arraycopy(bytes, 0, com, bytes.length, bytes.length);
-
-        String binFile = PathManager.getInstance().getWebDir() + "/" + fileName + ".bin";
-        FileIOUtils.writeFileFromBytesByStream(binFile, com);
     }
 
     public void serverSendMessage(View v) {

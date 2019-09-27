@@ -6,20 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ImageUtils;
+
+import in.mqtt.fileservice.PathManager;
 
 public class BitmapUtils {
 
-    public static Bitmap generateBitmap(String content, boolean select) {
-        Bitmap bitmap = generateBitmap(select ? Color.RED : Color.WHITE, 296, 152);
-        String[] arrStr = content.split("\n");
-        for (int i = 0; i < arrStr.length; i++) {
-            bitmap = ImageUtils.addTextWatermark(bitmap, arrStr[i], 20, select ? Color.WHITE : Color.BLACK, 10, 10 + i * (27));
-        }
-        return bitmap;
-    }
-
-    private static Bitmap generateBitmap(int color, int width, int height) {
+    public static Bitmap generateBitmap(int color, int width, int height) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
         Paint paint = new Paint();
@@ -32,9 +26,42 @@ public class BitmapUtils {
         return bitmap;
     }
 
-    public static byte[] changeSingleBytes(Bitmap bmp) {
+
+    public static Bitmap generateWaterBitmap(String content, int backgroundColor, int textColor, int width, int height) {
+        Bitmap bitmap = generateBitmap(backgroundColor, width, height);
+        String[] arrStr = content.split("\n");
+        for (int i = 0; i < arrStr.length; i++) {
+            bitmap = ImageUtils.addTextWatermark(bitmap, arrStr[i], 20, textColor, 10, 10 + i * (27));
+        }
+        return bitmap;
+    }
+
+
+    public static Bitmap generateWaterBitmap(String content, boolean select) {
+        return generateWaterBitmap(content, select ? Color.RED : Color.WHITE, select ? Color.WHITE : Color.BLACK, 296, 128);
+    }
+
+    public static void generateBin(String content, String fileName, boolean select, int width, int height) {
+        byte[] bytesA;
+        byte[] com;
+        if (select) {
+            bytesA = bitmap2SingleBitmap(BitmapUtils.generateWaterBitmap(content, Color.RED, Color.WHITE, width, height));
+            com = new byte[bytesA.length * 2];
+            System.arraycopy(bytesA, 0, com, bytesA.length, bytesA.length);
+        } else {
+            bytesA = bitmap2SingleBitmap(BitmapUtils.generateWaterBitmap(content, Color.WHITE, Color.BLACK, width, height));
+            com = new byte[bytesA.length * 2];
+            System.arraycopy(bytesA, 0, com, 0, bytesA.length);
+        }
+
+        String binFile = PathManager.getInstance().getWebDir() + "/" + fileName + ".bin";
+        FileIOUtils.writeFileFromBytesByStream(binFile, com);
+    }
+
+
+    public static byte[] bitmap2SingleBitmap(Bitmap bmp) {
         bmp = ImageUtils.rotate(bmp, 90, 0.5f, 0.5f);
-        int[] binarys = gray2Binary(bmp);
+        int[] binarys = gray2binary(bmp);
         return compressMonoBitmap(bmp, binarys);
     }
 
@@ -53,7 +80,7 @@ public class BitmapUtils {
         return newss;
     }
 
-    private static int[] gray2Binary(Bitmap bmp) {
+    private static int[] gray2binary(Bitmap bmp) {
         int width = bmp.getWidth();   // 获取位图的宽
         int height = bmp.getHeight(); // 获取位图的高
         int[] pixels = new int[width * height];  // 通过位图的大小创建像素点数组,

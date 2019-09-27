@@ -26,7 +26,7 @@ public class InputModel implements Serializable {
         this.ap_mac = ap_mac;
         this.pricetag_mac = pricetag_mac;
         this.cmd = "PictureUpdate";
-        this.work_mode = 0;
+        this.work_mode = 1;
         this.picture_path = "http://" + Config.MQTT_IP + ":" + Config.MQTT_FILE_PORT + "/";
         this.coord = "ff";
         this.start = 0;
