@@ -1,5 +1,6 @@
 package in.mqtt;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.EncodeUtils;
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.Utils;
 
@@ -19,10 +21,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Collections;
 
+import in.mqtt.fileservice.PathManager;
 import in.mqtt.model.InputModel;
 import in.mqtt.model.MqttExtendModel;
 import in.mqtt.model.MqttMessageModel;
 import in.mqtt.mqttserver.R;
+import in.mqtt.utils.BitmapUtils;
 import io.moquette.interception.AbstractInterceptHandler;
 import io.moquette.interception.messages.InterceptConnectMessage;
 import io.moquette.interception.messages.InterceptDisconnectMessage;
@@ -133,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void clientSendMessage(View v) {
+        sss("AAAAAAAAAAA", "000009", true);
+        sss("BBBBBBBBBBB", "00000b", false);
+
         MqttMessageModel messageModel = new MqttMessageModel();
         messageModel.setCmd(3815);
         messageModel.setSer_id(System.currentTimeMillis() + "");
@@ -147,11 +153,20 @@ public class MainActivity extends AppCompatActivity {
         messageModel.setExtend(mqttExtendModel);
         Log.w("info", messageModel.toString());
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
+    }
 
-//        Bitmap bitmap = ImageUtils.getBitmap(PathManager.getInstance().getWebDir() + "/a.jpg");
-//        Bitmap bitmap1 = BitmapUtils.convertToBlackWhite(bitmap);
-//        Bitmap bitmap2 = BitmapUtils.convertGreyImgByFloyd(bitmap);
-//        ImageUtils.save(bitmap2, PathManager.getInstance().getWebDir() + "/c.jpg", Bitmap.CompressFormat.JPEG);
+    private void sss(String content, String fileName, boolean select) {
+        Bitmap aa = BitmapUtils.generateBitmap(content, select);
+
+        byte[] bytes = BitmapUtils.changeSingleBytes(aa);
+        Log.w("info", "bytes : " + bytes.length);
+        byte[] com = new byte[bytes.length * 2];
+
+        System.arraycopy(bytes, 0, com, 0, bytes.length);
+        System.arraycopy(bytes, 0, com, bytes.length, bytes.length);
+
+        String binFile = PathManager.getInstance().getWebDir() + "/" + fileName + ".bin";
+        FileIOUtils.writeFileFromBytesByStream(binFile, com);
     }
 
     public void serverSendMessage(View v) {
