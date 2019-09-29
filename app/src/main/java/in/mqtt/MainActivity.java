@@ -151,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
         messageModel.setExtend(mqttExtendModel);
         Log.w("info", messageModel.toString());
         MqttClientManger.getInstance().sendMessage(messageModel.toString());
-
-        NetworkUtils.isAvailable();
     }
 
     public void serverSendMessage(View v) {

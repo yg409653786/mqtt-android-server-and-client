@@ -44,7 +44,7 @@ public class MqttClientManger {
             MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
             mqttConnectOptions.setAutomaticReconnect(true);
             mqttConnectOptions.setCleanSession(false);
-            mqttConnectOptions.setKeepAliveInterval(60);
+            mqttConnectOptions.setKeepAliveInterval(5);
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
