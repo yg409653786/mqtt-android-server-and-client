@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.GsonUtils;
-import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.Utils;
 
 import org.apache.log4j.BasicConfigurator;
